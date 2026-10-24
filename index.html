@@ -33,6 +33,7 @@
     <aside class="toc" id="toc" aria-label="Contents">
       <h3>Contents</h3>
       <ul>
+        <li><a href="#intro">Before we start</a></li>
         <li><a href="#ha-ft">1 · HA vs Fault Tolerance</a></li>
         <li><a href="#cap">2 · CAP Theorem</a></li>
         <li><a href="#consistency">3 · Consistency Models</a></li>
@@ -43,6 +44,23 @@
 
     <main class="content">
       <article class="wrap">
+
+        <!-- ================= Intro ================= -->
+        <section id="intro">
+          <h2>Before we start</h2>
+          <p>Every distributed system is really a bet against failure. Servers crash, networks split,
+            disks fill up, and a replica that was fine a second ago falls behind. You can't prevent all
+            of that — so the job isn't to build a system that never breaks. It's to build one that keeps
+            serving users <em>while</em> it breaks.</p>
+          <p>This guide builds that mindset in four steps. First we separate two goals people often
+            confuse — <strong>High Availability</strong> (stay reachable) and <strong>Fault
+            Tolerance</strong> (stay correct under failure). Then the <strong>CAP theorem</strong> shows
+            the trade-off you can't escape once the network partitions. <strong>Consistency models</strong>
+            turn that trade-off into a concrete choice about what users see when replicas disagree. And
+            <strong>database replication</strong> is the mechanism that ties it all together in practice.</p>
+          <p class="tip">Read it top to bottom for the full arc, or jump to any part from the contents.
+            Each section has its own diagram.</p>
+        </section>
 
         <!-- ================= HA vs FT ================= -->
         <section id="ha-ft">
