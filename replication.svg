@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="r1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#555"/></marker>
+    <marker id="r2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2f6fb3"/></marker>
+  </defs>
+  <rect width="800" height="640" fill="#ffffff"/>
+  <text x="400" y="38" text-anchor="middle" font-size="26" font-weight="800" fill="#1a1d21">Database Replication</text>
+  <text x="400" y="62" text-anchor="middle" font-size="14" fill="#5a6572">Copy data to replicas for availability, read scale, and recovery.</text>
+
+  <!-- Architecture block -->
+  <rect x="30" y="82" width="740" height="196" rx="14" fill="#fafcff" stroke="#2f6fb3" stroke-width="1.6"/>
+  <text x="50" y="106" font-size="14" font-weight="800" fill="#275e97">Primary → Replica architecture</text>
+
+  <!-- app -->
+  <rect x="55" y="150" width="90" height="46" rx="8" fill="#fff" stroke="#6b7785"/><text x="100" y="178" text-anchor="middle" font-size="12" fill="#333">Application</text>
+  <!-- primary -->
+  <g>
+    <ellipse cx="300" cy="150" rx="34" ry="11" fill="#e7f0fb" stroke="#2f6fb3" stroke-width="1.8"/>
+    <path d="M266,150 v44 a34,11 0 0 0 68,0 v-44" fill="#e7f0fb" stroke="#2f6fb3" stroke-width="1.8"/>
+    <text x="300" y="200" text-anchor="middle" font-size="12" font-weight="700" fill="#275e97">Primary</text>
+    <text x="300" y="216" text-anchor="middle" font-size="10" fill="#555">WRITE</text>
+  </g>
+  <!-- write arrow -->
+  <line x1="145" y1="165" x2="264" y2="165" stroke="#d64545" stroke-width="2" marker-end="url(#r1)"/>
+  <text x="200" y="158" text-anchor="middle" font-size="10.5" fill="#b33" font-weight="700">writes</text>
+
+  <!-- replicas -->
+  <g>
+    <ellipse cx="560" cy="120" rx="30" ry="9" fill="#eafaf0" stroke="#2e9e5b" stroke-width="1.6"/>
+    <path d="M530,120 v34 a30,9 0 0 0 60,0 v-34" fill="#eafaf0" stroke="#2e9e5b" stroke-width="1.6"/>
+    <text x="560" y="162" text-anchor="middle" font-size="10.5" fill="#1f7a46">Replica 1 (READ)</text>
+  </g>
+  <g>
+    <ellipse cx="560" cy="205" rx="30" ry="9" fill="#eafaf0" stroke="#2e9e5b" stroke-width="1.6"/>
+    <path d="M530,205 v34 a30,9 0 0 0 60,0 v-34" fill="#eafaf0" stroke="#2e9e5b" stroke-width="1.6"/>
+    <text x="560" y="247" text-anchor="middle" font-size="10.5" fill="#1f7a46">Replica N (READ)</text>
+  </g>
+  <!-- replication stream -->
+  <line x1="334" y1="150" x2="528" y2="128" stroke="#2f6fb3" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#r2)"/>
+  <line x1="334" y1="165" x2="528" y2="210" stroke="#2f6fb3" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#r2)"/>
+  <text x="430" y="120" text-anchor="middle" font-size="10" fill="#2f6fb3">replication stream (binlog)</text>
+  <!-- reads back to app -->
+  <path d="M530,130 C 430,250 230,250 148,188" fill="none" stroke="#2e9e5b" stroke-width="1.5" marker-end="url(#r2)"/>
+  <text x="340" y="262" text-anchor="middle" font-size="10.5" fill="#1f7a46" font-weight="700">reads routed to replicas</text>
+
+  <!-- Async vs Sync -->
+  <rect x="30" y="292" width="360" height="150" rx="12" fill="#f6fcf9" stroke="#2e9e5b" stroke-width="1.6"/>
+  <text x="50" y="316" font-size="14" font-weight="800" fill="#1f7a46">Asynchronous (most common)</text>
+  <text x="50" y="338" font-size="11.5" fill="#333">Primary commits without waiting for replicas.</text>
+  <text x="50" y="356" font-size="11.5" fill="#2b6b43">✔ Better performance / throughput</text>
+  <text x="50" y="374" font-size="11.5" fill="#b33">✘ Replication lag; risk of loss on failover</text>
+  <text x="50" y="402" font-size="10.5" fill="#666">Primary ——commit——▶ client   (replicas catch up later)</text>
+
+  <rect x="410" y="292" width="360" height="150" rx="12" fill="#f7fbff" stroke="#2f6fb3" stroke-width="1.6"/>
+  <text x="430" y="316" font-size="14" font-weight="800" fill="#275e97">Synchronous</text>
+  <text x="430" y="338" font-size="11.5" fill="#333">Primary waits for replica acknowledgement.</text>
+  <text x="430" y="356" font-size="11.5" fill="#2c5680">✔ Stronger consistency, lower data-loss risk</text>
+  <text x="430" y="374" font-size="11.5" fill="#b33">✘ Higher latency, lower throughput</text>
+  <text x="430" y="402" font-size="10.5" fill="#666">Primary ⇄ replica ACK ——then——▶ client</text>
+
+  <!-- Failover flow -->
+  <rect x="30" y="456" width="740" height="92" rx="12" fill="#fff7ec" stroke="#e0a43b" stroke-width="1.6"/>
+  <text x="50" y="480" font-size="14" font-weight="800" fill="#9a6a12">Failover when the primary dies</text>
+  <g font-size="11" fill="#7a5410">
+    <rect x="52" y="498" width="150" height="34" rx="8" fill="#fff" stroke="#e0a43b"/><text x="127" y="520" text-anchor="middle">1. Detect failure</text>
+    <rect x="232" y="498" width="170" height="34" rx="8" fill="#fff" stroke="#e0a43b"/><text x="317" y="520" text-anchor="middle">2. Promote a replica</text>
+    <rect x="432" y="498" width="180" height="34" rx="8" fill="#fff" stroke="#e0a43b"/><text x="522" y="520" text-anchor="middle">3. Redirect writes</text>
+  </g>
+  <line x1="202" y1="515" x2="230" y2="515" stroke="#9a6a12" stroke-width="1.6" marker-end="url(#r1)"/>
+  <line x1="402" y1="515" x2="430" y2="515" stroke="#9a6a12" stroke-width="1.6" marker-end="url(#r1)"/>
+  <text x="650" y="520" font-size="10.5" fill="#7a5410">manual or automated (MHA, Orchestrator, Patroni)</text>
+
+  <!-- Lag + backup note -->
+  <rect x="30" y="562" width="360" height="62" rx="12" fill="#fdeeee" stroke="#d64545" stroke-width="1.4"/>
+  <text x="50" y="586" font-size="12.5" font-weight="800" fill="#b33">⚠ Replication Lag</text>
+  <text x="50" y="606" font-size="10.5" fill="#7a2a2a">A replica can trail the primary. Write-then-read-replica</text>
+  <text x="50" y="620" font-size="10.5" fill="#7a2a2a">may return stale data. Route critical reads to primary.</text>
+
+  <rect x="410" y="562" width="360" height="62" rx="12" fill="#f4f6f8" stroke="#e5e8ec"/>
+  <text x="430" y="586" font-size="12.5" font-weight="800" fill="#1a1d21">📌 Remember</text>
+  <text x="430" y="606" font-size="10.5" fill="#444">Replication = HA + Scalability.  Backup = Recovery.</text>
+  <text x="430" y="620" font-size="10.5" fill="#b35b00" font-weight="700">Replication is NOT a replacement for backups.</text>
+</svg>

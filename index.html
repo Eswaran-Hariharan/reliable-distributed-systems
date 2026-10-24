@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Designing Reliable Distributed Systems</title>
+  <meta name="description" content="A practical guide to reliable distributed systems: High Availability vs Fault Tolerance, the CAP theorem, consistency models, and database replication — each with its own diagram." />
+  <script>(function(){ try { if (localStorage.getItem('rds-theme') === 'dark') document.documentElement.classList.add('dark'); } catch(e){} })();</script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+      <p class="eyebrow">System Design · Reliability</p>
+      <h1>Designing Reliable Distributed Systems</h1>
+      <p class="lede">In distributed systems, failures are inevitable. The real question isn't
+        <em>if</em> something fails — it's <strong>what happens when it does</strong>. This guide walks
+        through four ideas you keep coming back to: High Availability vs Fault Tolerance, the CAP
+        theorem, consistency models, and database replication.</p>
+      <div class="hero-badges">
+        <span class="badge">HA vs FT</span>
+        <span class="badge">CAP</span>
+        <span class="badge">Consistency Models</span>
+        <span class="badge">Replication</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="toc" id="toc" aria-label="Contents">
+      <h3>Contents</h3>
+      <ul>
+        <li><a href="#ha-ft">1 · HA vs Fault Tolerance</a></li>
+        <li><a href="#cap">2 · CAP Theorem</a></li>
+        <li><a href="#consistency">3 · Consistency Models</a></li>
+        <li><a href="#replication">4 · Database Replication</a></li>
+        <li><a href="#wrap">Putting it together</a></li>
+      </ul>
+    </aside>
+
+    <main class="content">
+      <article class="wrap">
+
+        <!-- ================= HA vs FT ================= -->
+        <section id="ha-ft">
+          <span class="kicker">Part 1</span>
+          <h2>High Availability vs Fault Tolerance</h2>
+          <p>These two get used interchangeably, but they answer different questions. One is about
+            <em>staying reachable</em>; the other is about <em>staying correct</em> while parts of the
+            system are broken.</p>
+
+          <figure>
+            <img src="ha-vs-ft.svg" alt="Diagram comparing High Availability and Fault Tolerance, with building blocks" />
+            <figcaption>HA keeps the service reachable; FT keeps it working correctly through failures.</figcaption>
+          </figure>
+
+          <h3>🟢 High Availability (HA)</h3>
+          <p>HA focuses on keeping the service available and minimizing downtime. The classic pattern
+            is several application servers behind a load balancer: if one instance dies, the balancer
+            routes traffic to the healthy ones and users barely notice. HA is usually measured in
+            uptime percentages — 99.9%, 99.99%, and so on.</p>
+
+          <h3>🔵 Fault Tolerance (FT)</h3>
+          <p>FT focuses on keeping the system running <em>correctly</em> even when components fail. Think
+            database replication with automatic failover: the primary goes down, a replica is promoted,
+            and the system keeps serving correct data with no single point of failure.</p>
+
+          <div class="callout">
+            <p><strong>👉 HA</strong> = "Keep the service available."<br/>
+               <strong>👉 FT</strong> = "Keep the system working even when something breaks."</p>
+            <p>HA is part of FT, but FT goes further. HA keeps the door open; FT makes sure the room
+              still works once you're inside.</p>
+          </div>
+
+          <p><strong>Common building blocks:</strong> Redundancy · Replication · Load Balancing ·
+            Automatic Failover · Health Checks · Monitoring &amp; Disaster Recovery.</p>
+          <p class="tip">💡 Design for failure, not for perfect conditions.</p>
+
+          <div class="question">
+            <strong>Discussion:</strong> For a critical payment system, would you prioritize High
+            Availability or Fault Tolerance? (Hint: a payment that's <em>available but wrong</em> is worse
+            than one that's briefly unavailable.)
+          </div>
+        </section>
+
+        <!-- ================= CAP ================= -->
+        <section id="cap">
+          <span class="kicker">Part 2</span>
+          <h2>The CAP Theorem</h2>
+          <p>When you build a distributed system, a fundamental question shows up: can you have
+            <strong>Consistency</strong>, <strong>Availability</strong>, and <strong>Partition
+            Tolerance</strong> all at once? CAP says no — during a network partition, you must choose
+            between consistency and availability.</p>
+
+          <figure>
+            <img src="cap.svg" alt="CAP theorem triangle showing Consistency, Availability, Partition Tolerance and the CP/AP trade-offs" />
+            <figcaption>Each edge is a trade-off; choosing one drops the opposite property.</figcaption>
+          </figure>
+
+          <ul class="plain">
+            <li>🔵 <strong>Consistency (C)</strong> — every read gets the latest data.</li>
+            <li>🟢 <strong>Availability (A)</strong> — every request gets a response.</li>
+            <li>🔴 <strong>Partition Tolerance (P)</strong> — the system keeps operating despite network failures.</li>
+          </ul>
+
+          <p>Since network partitions are a fact of life in distributed systems, you keep P and choose
+            between the other two:</p>
+
+          <div class="cards two">
+            <div class="card amber">
+              <h4>CP — Consistency + Partition Tolerance</h4>
+              <p>Favor correctness over availability. The system may reject or delay requests to avoid
+                returning stale data. Good when being wrong is unacceptable.</p>
+              <p class="eg">e.g. banking, payments, strongly-consistent stores</p>
+            </div>
+            <div class="card green">
+              <h4>AP — Availability + Partition Tolerance</h4>
+              <p>Favor staying up over immediate consistency. The system always answers and reconciles
+                data later. Good when a brief staleness is fine.</p>
+              <p class="eg">e.g. social feeds, catalogs, shopping carts</p>
+            </div>
+          </div>
+
+          <p class="tip">💡 CAP isn't about blindly picking a database. It's about understanding your
+            business requirements and making the right trade-off.</p>
+
+          <div class="question">
+            <strong>Discussion:</strong> For a payment system, would you choose CP or AP, and why?
+          </div>
+        </section>
+
+        <!-- ================= Consistency ================= -->
+        <section id="consistency">
+          <span class="kicker">Part 3</span>
+          <h2>Consistency Models</h2>
+          <p>In a distributed system, data is usually replicated across multiple nodes. The big
+            question is: <strong>when one replica is updated, when should the others see that
+            update?</strong> That's what consistency models define. Three matter most.</p>
+
+          <figure>
+            <img src="consistency-models.svg" alt="Diagram of strong, eventual, and causal consistency showing how a write propagates to replicas" />
+            <figcaption>Strong updates everyone before returning; eventual converges over time; causal preserves order.</figcaption>
+          </figure>
+
+          <h3>🔹 1. Strong Consistency</h3>
+          <p>After a successful write, every subsequent read returns the latest value. Write
+            <code>X = 10</code> and all reads see <code>X = 10</code>. It's simple to reason about and
+            best for correctness, but it costs higher latency and can reduce availability during
+            network failures.</p>
+          <p class="use">Use cases: 🏦 banking · 💳 payments · 📦 critical inventory · 💰 financial transactions</p>
+
+          <h3>🔹 2. Eventual Consistency</h3>
+          <p>After a write, replicas may temporarily hold different values, but they <em>eventually</em>
+            converge to the latest value. You get high availability, lower latency, and great scaling —
+            at the cost of reads that may briefly return stale data.</p>
+          <p class="use">Use cases: 📱 social feeds · 🔔 notifications · 📊 analytics · 🛒 shopping carts</p>
+
+          <h3>🔹 3. Causal Consistency</h3>
+          <p>Causal consistency preserves the cause-and-effect relationship between operations. If
+            <code>Write A → Read A → Write B</code>, then every replica observes A before B. It gives
+            stronger guarantees than eventual consistency without demanding that every operation be
+            globally synchronized.</p>
+          <p class="use">Use cases: 💬 comment/reply systems · 👥 collaborative apps · 🔄 distributed workflows · 🧩 dependent operations</p>
+
+          <h3>⚔️ Quick comparison</h3>
+          <table class="cmp">
+            <thead><tr><th>Model</th><th>Behavior</th><th>Trade-off</th><th>Best for</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Strong</strong></td><td>Latest data immediately</td><td>Higher coordination / latency</td><td>Correctness</td></tr>
+              <tr><td><strong>Eventual</strong></td><td>Converges over time</td><td>Temporary staleness</td><td>Availability &amp; scale</td></tr>
+              <tr><td><strong>Causal</strong></td><td>Preserves operation order</td><td>Medium complexity</td><td>Ordered, dependent ops</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout">
+            <p><strong>💡 Interview tip:</strong> don't just say "we'll use strong consistency." Ask:
+              <em>what happens if a user reads stale data?</em></p>
+            <ul class="plain">
+              <li>Stale data unacceptable → <strong>Strong</strong></li>
+              <li>Temporary staleness acceptable → <strong>Eventual</strong></li>
+              <li>Operation ordering matters → <strong>Causal</strong></li>
+            </ul>
+            <p>Remember: <strong>Strong = Correctness</strong> · <strong>Eventual = Availability + Scale</strong> · <strong>Causal = Correct Order</strong>.</p>
+          </div>
+        </section>
+
+        <!-- ================= Replication ================= -->
+        <section id="replication">
+          <span class="kicker">Part 4</span>
+          <h2>Database Replication</h2>
+          <p>What happens when your SQL database becomes a bottleneck, or the primary goes down?
+            Replication creates copies of your data on one or more replicas, so you can survive
+            failures and spread read traffic.</p>
+
+          <figure>
+            <img src="replication.svg" alt="Database replication architecture: primary handles writes, replicas handle reads, with async vs sync, failover, and replication lag" />
+            <figcaption>Writes hit the primary; reads fan out to replicas; a replica is promoted on failover.</figcaption>
+          </figure>
+
+          <h3>🔹 Why replicate?</h3>
+          <ul class="plain">
+            <li>✅ High availability &amp; failover</li>
+            <li>✅ Scale read traffic</li>
+            <li>✅ Disaster recovery</li>
+            <li>✅ Reporting / analytics on replicas</li>
+            <li>✅ Reduced downtime</li>
+          </ul>
+
+          <h3>🔹 Two important models</h3>
+          <div class="cards two">
+            <div class="card green">
+              <h4>🟢 Asynchronous</h4>
+              <p>The primary commits without waiting for replicas; they catch up after a small delay.</p>
+              <p>✔ Better performance &nbsp; ✘ Possible replication lag / data loss during failure</p>
+            </div>
+            <div class="card blue">
+              <h4>🔵 Synchronous</h4>
+              <p>The primary waits for replica acknowledgement before confirming the write.</p>
+              <p>✔ Stronger consistency, lower data-loss risk &nbsp; ✘ Higher latency</p>
+            </div>
+          </div>
+
+          <h3>🔹 Typical architecture</h3>
+          <p>Application → <strong>Primary (WRITE)</strong> → <strong>Replicas (READ)</strong>. In MySQL,
+            changes propagate through the <strong>Binary Log (binlog)</strong> and are applied by the
+            replicas.</p>
+
+          <h3>🔹 Failover</h3>
+          <p>If the primary fails: <strong>detect failure → promote a replica → redirect writes</strong>.
+            Failover can be manual or automated with HA/orchestration tools (MHA, Orchestrator, Patroni).</p>
+
+          <div class="callout warn">
+            <p><strong>⚠️ Replication lag:</strong> a replica can temporarily trail the primary. This bites
+              when a user writes data and then immediately reads from a replica — route those critical
+              reads to the primary, or read-your-writes.</p>
+          </div>
+
+          <div class="question">
+            <strong>Interview angle — walk the chain:</strong> replication type → read/write routing →
+            lag → failover → consistency → monitoring.
+          </div>
+
+          <p class="tip">📌 Remember: <strong>Replication = HA + Scalability</strong>, <strong>Backup =
+            Data Recovery</strong>. Replication is <em>not</em> a replacement for backups.</p>
+        </section>
+
+        <!-- ================= Wrap ================= -->
+        <section id="wrap">
+          <h2>Putting it together</h2>
+          <p>These four ideas stack. <strong>HA and FT</strong> set your goal — reachable, and correct
+            under failure. <strong>CAP</strong> frames the unavoidable trade-off once the network splits.
+            <strong>Consistency models</strong> are how you cash out that trade-off at the data layer. And
+            <strong>replication</strong> is the concrete mechanism that delivers availability, scale, and
+            recovery — as long as you respect lag and keep real backups.</p>
+          <p class="tip">Reliable systems aren't built by luck. They're built by design — for the day
+            something breaks.</p>
+        </section>
+
+      </article>
+      <footer>Designing Reliable Distributed Systems · System design notes · Diagrams rendered as SVG.</footer>
+    </main>
+  </div>
+
+  <script>
+    const themeBtn = document.getElementById('themeBtn');
+    const syncTheme = () => { themeBtn.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙'; };
+    syncTheme();
+    themeBtn.addEventListener('click', () => {
+      const dark = document.documentElement.classList.toggle('dark');
+      try { localStorage.setItem('rds-theme', dark ? 'dark' : 'light'); } catch(e){}
+      syncTheme();
+    });
+    const bar = document.getElementById('progress');
+    const onScroll = () => { const h = document.documentElement; const max = h.scrollHeight - h.clientHeight; bar.style.width = max > 0 ? (h.scrollTop/max*100)+'%' : '0%'; };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  </script>
+</body>
+</html>

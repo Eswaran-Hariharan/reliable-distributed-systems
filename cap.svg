@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="capBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#fbfcfe"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#capBg)"/>
+  <text x="400" y="40" text-anchor="middle" font-size="26" font-weight="800" fill="#1a1d21">CAP Theorem</text>
+  <text x="400" y="64" text-anchor="middle" font-size="14" fill="#5a6572">During a network partition you pick two of three. Not all three.</text>
+
+  <!-- Triangle of the three properties -->
+  <!-- vertices: C top (400,120), A bottom-left (210,360), P bottom-right (590,360) -->
+  <line x1="400" y1="140" x2="230" y2="345" stroke="#c9a227" stroke-width="3"/>
+  <line x1="400" y1="140" x2="570" y2="345" stroke="#2f6fb3" stroke-width="3"/>
+  <line x1="245" y1="360" x2="555" y2="360" stroke="#2e9e5b" stroke-width="3"/>
+
+  <!-- edge labels = trade-offs -->
+  <g transform="rotate(-50 315 243)">
+    <rect x="258" y="232" width="118" height="22" rx="11" fill="#fff7e6" stroke="#c9a227"/>
+    <text x="317" y="247" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8a6d10">CP: consistent</text>
+  </g>
+  <g transform="rotate(50 487 243)">
+    <rect x="428" y="232" width="118" height="22" rx="11" fill="#eaf1fb" stroke="#2f6fb3"/>
+    <text x="487" y="247" text-anchor="middle" font-size="11.5" font-weight="700" fill="#275e97">AP: available</text>
+  </g>
+  <rect x="340" y="350" width="120" height="22" rx="11" fill="#eafaf0" stroke="#2e9e5b"/>
+  <text x="400" y="365" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1f7a46">CA: no partitions</text>
+
+  <!-- vertex: Consistency -->
+  <circle cx="400" cy="120" r="34" fill="#fff7e6" stroke="#c9a227" stroke-width="2.5"/>
+  <text x="400" y="116" text-anchor="middle" font-size="20" font-weight="800" fill="#c9a227">C</text>
+  <text x="400" y="134" text-anchor="middle" font-size="9.5" fill="#8a6d10">Consistency</text>
+  <text x="400" y="86" text-anchor="middle" font-size="10.5" fill="#555">Every read = latest write</text>
+
+  <!-- vertex: Availability -->
+  <circle cx="210" cy="360" r="34" fill="#eafaf0" stroke="#2e9e5b" stroke-width="2.5"/>
+  <text x="210" y="356" text-anchor="middle" font-size="20" font-weight="800" fill="#2e9e5b">A</text>
+  <text x="210" y="374" text-anchor="middle" font-size="9.5" fill="#1f7a46">Availability</text>
+  <text x="210" y="408" text-anchor="middle" font-size="10.5" fill="#555">Every request gets a reply</text>
+
+  <!-- vertex: Partition Tolerance -->
+  <circle cx="590" cy="360" r="34" fill="#eaf1fb" stroke="#2f6fb3" stroke-width="2.5"/>
+  <text x="590" y="356" text-anchor="middle" font-size="20" font-weight="800" fill="#2f6fb3">P</text>
+  <text x="590" y="374" text-anchor="middle" font-size="9" fill="#275e97">Partition Tol.</text>
+  <text x="590" y="408" text-anchor="middle" font-size="10.5" fill="#555">Survives network splits</text>
+
+  <!-- center note -->
+  <text x="400" y="255" text-anchor="middle" font-size="12" fill="#9aa5b1">Pick an edge =</text>
+  <text x="400" y="272" text-anchor="middle" font-size="12" fill="#9aa5b1">drop the opposite vertex</text>
+
+  <!-- CP / AP cards -->
+  <rect x="40" y="440" width="350" height="130" rx="12" fill="#fff" stroke="#c9a227" stroke-width="1.8"/>
+  <text x="60" y="466" font-size="15" font-weight="800" fill="#8a6d10">CP — Consistency + Partition Tolerance</text>
+  <text x="60" y="488" font-size="12" fill="#444">Refuse or delay responses to stay correct.</text>
+  <text x="60" y="508" font-size="12" fill="#444">Correctness &gt; availability.</text>
+  <text x="60" y="532" font-size="11.5" fill="#666">Examples: banking, payments, strongly-consistent stores</text>
+  <text x="60" y="552" font-size="11.5" fill="#666">(e.g. HBase, MongoDB in certain configs)</text>
+
+  <rect x="410" y="440" width="350" height="130" rx="12" fill="#fff" stroke="#2e9e5b" stroke-width="1.8"/>
+  <text x="430" y="466" font-size="15" font-weight="800" fill="#1f7a46">AP — Availability + Partition Tolerance</text>
+  <text x="430" y="488" font-size="12" fill="#444">Always respond, reconcile data later.</text>
+  <text x="430" y="508" font-size="12" fill="#444">Staying up &gt; immediate consistency.</text>
+  <text x="430" y="532" font-size="11.5" fill="#666">Examples: social feeds, catalogs, carts</text>
+  <text x="430" y="552" font-size="11.5" fill="#666">(e.g. Cassandra, DynamoDB, Couchbase)</text>
+
+  <text x="400" y="430" text-anchor="middle" font-size="11.5" fill="#b35b00" font-weight="700">💡 CAP isn't about a database — it's about your business trade-off.</text>
+</svg>

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="haG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8f7ee"/><stop offset="1" stop-color="#d4f0df"/>
+    </linearGradient>
+    <linearGradient id="ftG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e7f0fb"/><stop offset="1" stop-color="#d4e4f7"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="560" fill="#ffffff"/>
+  <text x="400" y="38" text-anchor="middle" font-size="26" font-weight="800" fill="#1a1d21">High Availability <tspan fill="#9aa5b1">vs</tspan> Fault Tolerance</text>
+  <text x="400" y="62" text-anchor="middle" font-size="14" fill="#5a6572">Two ways to answer: "What happens when something fails?"</text>
+
+  <!-- HA panel -->
+  <rect x="30" y="86" width="355" height="300" rx="14" fill="url(#haG)" stroke="#2e9e5b" stroke-width="2"/>
+  <circle cx="64" cy="118" r="13" fill="#2e9e5b"/><text x="64" y="123" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">HA</text>
+  <text x="88" y="116" font-size="18" font-weight="800" fill="#1f7a46">High Availability</text>
+  <text x="88" y="136" font-size="12.5" fill="#2b6b43">Keep the service available. Minimize downtime.</text>
+
+  <!-- HA mini diagram: LB + servers -->
+  <text x="70" y="170" font-size="11.5" fill="#555">Users</text>
+  <circle cx="72" cy="200" r="11" fill="#6b7785"/>
+  <rect x="120" y="186" width="92" height="30" rx="7" fill="#fff" stroke="#2e9e5b" stroke-width="1.6"/>
+  <text x="166" y="206" text-anchor="middle" font-size="11" fill="#1f7a46" font-weight="700">Load Balancer</text>
+  <line x1="84" y1="200" x2="118" y2="200" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <!-- three servers -->
+  <rect x="258" y="166" width="96" height="26" rx="6" fill="#fff" stroke="#2e9e5b"/><text x="306" y="183" text-anchor="middle" font-size="10.5" fill="#333">App Server 1</text>
+  <rect x="258" y="196" width="96" height="26" rx="6" fill="#fff" stroke="#2e9e5b"/><text x="306" y="213" text-anchor="middle" font-size="10.5" fill="#333">App Server 2</text>
+  <rect x="258" y="226" width="96" height="26" rx="6" fill="#fdecec" stroke="#d64545" stroke-dasharray="4 3"/><text x="306" y="243" text-anchor="middle" font-size="10.5" fill="#b33">Server 3 (down)</text>
+  <line x1="214" y1="197" x2="256" y2="179" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="214" y1="201" x2="256" y2="209" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="214" y1="205" x2="256" y2="239" stroke="#bbb" stroke-width="1.4" stroke-dasharray="4 3"/>
+
+  <text x="50" y="286" font-size="12" fill="#2b6b43">✔ Measured in uptime % (99.9%, 99.99%)</text>
+  <text x="50" y="308" font-size="12" fill="#2b6b43">✔ Redundant instances behind a balancer</text>
+  <text x="50" y="330" font-size="12" fill="#2b6b43">✔ Service survives even if a node drops</text>
+  <text x="50" y="360" font-size="12.5" fill="#1f7a46" font-weight="700">Goal → "Keep it reachable."</text>
+
+  <!-- FT panel -->
+  <rect x="415" y="86" width="355" height="300" rx="14" fill="url(#ftG)" stroke="#2f6fb3" stroke-width="2"/>
+  <circle cx="449" cy="118" r="13" fill="#2f6fb3"/><text x="449" y="123" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">FT</text>
+  <text x="473" y="116" font-size="18" font-weight="800" fill="#275e97">Fault Tolerance</text>
+  <text x="473" y="136" font-size="12.5" fill="#2c5680">Keep working correctly even when parts fail.</text>
+
+  <!-- FT mini diagram: primary -> replicas with failover -->
+  <g>
+    <ellipse cx="500" cy="200" rx="26" ry="9" fill="#fff" stroke="#2f6fb3" stroke-width="1.6"/>
+    <path d="M474,200 v22 a26,9 0 0 0 52,0 v-22" fill="#fff" stroke="#2f6fb3" stroke-width="1.6"/>
+    <text x="500" y="244" text-anchor="middle" font-size="10.5" fill="#b33" font-weight="700">Primary ✗</text>
+  </g>
+  <g>
+    <ellipse cx="620" cy="185" rx="24" ry="8" fill="#eafaf0" stroke="#2e9e5b" stroke-width="1.6"/>
+    <path d="M596,185 v20 a24,8 0 0 0 48,0 v-20" fill="#eafaf0" stroke="#2e9e5b" stroke-width="1.6"/>
+    <text x="620" y="224" text-anchor="middle" font-size="10" fill="#1f7a46" font-weight="700">Replica → Promoted</text>
+  </g>
+  <g>
+    <ellipse cx="700" cy="245" rx="22" ry="8" fill="#fff" stroke="#6b7785" stroke-width="1.4"/>
+    <path d="M678,245 v18 a22,8 0 0 0 44,0 v-18" fill="#fff" stroke="#6b7785" stroke-width="1.4"/>
+    <text x="700" y="282" text-anchor="middle" font-size="10" fill="#555">Replica 2</text>
+  </g>
+  <line x1="528" y1="196" x2="594" y2="188" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="548" y="178" font-size="9.5" fill="#777">auto failover</text>
+  <line x1="640" y1="205" x2="680" y2="238" stroke="#bbb" stroke-width="1.4" stroke-dasharray="3 3"/>
+
+  <text x="435" y="300" font-size="12" fill="#2c5680">✔ No single point of failure</text>
+  <text x="435" y="322" font-size="12" fill="#2c5680">✔ Automatic recovery via replication</text>
+  <text x="435" y="344" font-size="12" fill="#2c5680">✔ Correctness preserved, not just uptime</text>
+  <text x="435" y="372" font-size="12.5" fill="#275e97" font-weight="700">Goal → "Keep it correct."</text>
+
+  <!-- relationship bar -->
+  <rect x="30" y="404" width="740" height="56" rx="12" fill="#fff7ec" stroke="#e0a43b"/>
+  <text x="50" y="430" font-size="13" font-weight="700" fill="#9a6a12">Key relationship:</text>
+  <text x="50" y="450" font-size="12.5" fill="#7a5410">HA is part of FT, but FT goes further — HA keeps the door open; FT makes sure the room still works inside.</text>
+
+  <!-- building blocks -->
+  <rect x="30" y="476" width="740" height="64" rx="12" fill="#f4f6f8" stroke="#e5e8ec"/>
+  <text x="50" y="500" font-size="12.5" font-weight="700" fill="#1a1d21">Common building blocks:</text>
+  <text x="50" y="522" font-size="11.5" fill="#444">Redundancy · Replication · Load Balancing · Automatic Failover · Health Checks · Monitoring &amp; DR</text>
+  <text x="50" y="536" font-size="11" fill="#b35b00" font-weight="700">💡 Design for failure, not for perfect conditions.</text>
+</svg>
